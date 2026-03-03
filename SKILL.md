@@ -147,6 +147,26 @@ The O*NET datasets are bundled as reference data. To map company workforce to AI
 4. Use the O*NET datasets bundled in the skill's `data/` directory to pull task statements, work activities, and abilities for those occupations
 5. Cross-reference with Eloundou et al. exposure scores (search for "GPTs are GPTs" paper data)
 
+## Network Behavior
+
+This skill directs the agent to fetch publicly available data from the following sources. No credentials, API keys, or accounts are required or used. No data is sent to third-party endpoints — all fetches are read-only.
+
+| Source | What is fetched | URL pattern |
+|--------|----------------|-------------|
+| SEC EDGAR | 10-K and 20-F annual filings | `https://www.sec.gov/cgi-bin/browse-edgar` / `https://efts.sec.gov/` |
+| Earnings transcripts | Quarterly call transcripts (read-only) | Motley Fool, Seeking Alpha, or company IR pages |
+| Google Patents | Patent counts and titles | `https://patents.google.com/` |
+| Yahoo Finance / Macrotrends | Forward P/E, EV/Sales, sector medians | Public pages only |
+| Academic papers | Eloundou et al. "GPTs are GPTs" supplementary data | arXiv or author-hosted pages |
+
+**No data leaves your machine to any proprietary endpoint.** The O*NET datasets in `data/` are bundled locally and sourced from the publicly available O*NET database (https://www.onetcenter.org/database.html).
+
+**Python scripts** (`scripts/onet_lookup.py`, `scripts/calculate_scores.py`) make no network calls. They only read local files from the `data/` directory. Install dependencies with:
+
+```
+pip install -r requirements.txt
+```
+
 ## Handling Insufficient Data
 
 If certain data points are unavailable (e.g., no earnings transcripts for a smaller company, or limited patent data):
