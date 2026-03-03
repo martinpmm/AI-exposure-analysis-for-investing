@@ -14,16 +14,19 @@ The following datasets are bundled in the skill's `data/` directory:
 - **Columns:** O*NET-SOC Code, Title, Task ID, Task, Task Type, Incumbents Responding, Date, Domain Source
 - **Use:** See the specific tasks performed by each occupation. Assess which tasks are AI-automatable.
 
-### 3. Task_Ratings.xlsx (~161,559 ratings)
-- **Columns:** O*NET-SOC Code, Title, Task ID, Task, Scale ID, Scale Name, Category, Data Value, N, Standard Error, Lower/Upper CI Bound, Recommend Suppress, Date, Domain Source
-- **Use:** Get frequency and importance ratings for each task. Higher-frequency, higher-importance tasks that are AI-automatable have the greatest impact.
+### 3. Task_Ratings.txt (~35,902 ratings)
+- **Columns:** O*NET-SOC Code, Title, Task ID, Scale ID, Data Value
+- **Scale IDs:** `IM` (Importance, 1–5) and `RT` (Relevance of Task, 0–100%)
+- **Use:** Get importance and relevance ratings for each task. Higher-importance, higher-relevance tasks that are AI-automatable have the greatest impact.
 
-### 4. Work_Activities.xlsx (~73,308 entries)
-- **Columns:** O*NET-SOC Code, Title, Element ID, Element Name, Scale ID, Scale Name, Data Value, N, Standard Error, Lower/Upper CI Bound, Recommend Suppress, Not Relevant, Date, Domain Source
+### 4. Work_Activities.txt (~36,654 entries)
+- **Columns:** O*NET-SOC Code, Title, Element ID, Element Name, Data Value
+- **Scale:** Importance only (IM, 1–5)
 - **Use:** Understand the work activities for each occupation (e.g., "Getting Information", "Analyzing Data", "Making Decisions"). Activities involving information processing, data analysis, and communication are more AI-exposed.
 
-### 5. Abilities.xlsx (~92,976 entries)
-- **Columns:** O*NET-SOC Code, Title, Element ID, Element Name, Scale ID, Scale Name, Data Value, N, Standard Error, Lower/Upper CI Bound, Recommend Suppress, Not Relevant, Date, Domain Source
+### 5. Abilities.txt (~46,488 entries)
+- **Columns:** O*NET-SOC Code, Title, Element ID, Element Name, Data Value
+- **Scale:** Importance only (IM, 1–5)
 - **Use:** Understand the cognitive and physical abilities required. Occupations relying heavily on cognitive abilities (oral comprehension, written expression, deductive reasoning) are more AI-exposed than those requiring physical abilities (manual dexterity, stamina, spatial orientation).
 
 ## Mapping Workflow
@@ -128,11 +131,11 @@ SKILL_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA_DIR = os.path.join(SKILL_DIR, "data")
 
 # Load datasets
-occupations = pd.read_excel(os.path.join(DATA_DIR, 'Occupation_Data.xlsx'))
-tasks = pd.read_excel(os.path.join(DATA_DIR, 'Task_Statements.xlsx'))
-task_ratings = pd.read_excel(os.path.join(DATA_DIR, 'Task_Ratings.xlsx'))
-work_activities = pd.read_excel(os.path.join(DATA_DIR, 'Work_Activities.xlsx'))
-abilities = pd.read_excel(os.path.join(DATA_DIR, 'Abilities.xlsx'))
+occupations = pd.read_csv(os.path.join(DATA_DIR, 'Occupation_Data.txt'), sep='\t')
+tasks = pd.read_csv(os.path.join(DATA_DIR, 'Task_Statements.txt'), sep='\t')
+task_ratings = pd.read_csv(os.path.join(DATA_DIR, 'Task_Ratings.txt'), sep='\t')
+work_activities = pd.read_csv(os.path.join(DATA_DIR, 'Work_Activities.txt'), sep='\t')
+abilities = pd.read_csv(os.path.join(DATA_DIR, 'Abilities.txt'), sep='\t')
 
 # Find an occupation
 occ = occupations[occupations['Title'].str.contains('Software Developer', case=False)]
@@ -142,16 +145,10 @@ soc_code = occ.iloc[0]['O*NET-SOC Code']
 occ_tasks = tasks[tasks['O*NET-SOC Code'] == soc_code]
 
 # Get work activities (importance scores)
-occ_activities = work_activities[
-    (work_activities['O*NET-SOC Code'] == soc_code) &
-    (work_activities['Scale ID'] == 'IM')  # Importance scale
-]
+occ_activities = work_activities[work_activities['O*NET-SOC Code'] == soc_code]
 
 # Get abilities (importance scores)
-occ_abilities = abilities[
-    (abilities['O*NET-SOC Code'] == soc_code) &
-    (abilities['Scale ID'] == 'IM')  # Importance scale
-]
+occ_abilities = abilities[abilities['O*NET-SOC Code'] == soc_code]
 ```
 
 This code can be run during analysis to pull specific occupation data for the company being evaluated.
