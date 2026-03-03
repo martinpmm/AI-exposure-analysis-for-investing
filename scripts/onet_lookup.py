@@ -73,16 +73,16 @@ def load_data():
     """Load all O*NET datasets."""
     data = {}
     files = {
-        "occupations": "Occupation_Data.xlsx",
-        "tasks": "Task_Statements.xlsx",
-        "task_ratings": "Task_Ratings.xlsx",
-        "activities": "Work_Activities.xlsx",
-        "abilities": "Abilities.xlsx",
+        "occupations": "Occupation_Data.txt",
+        "tasks": "Task_Statements.txt",
+        "task_ratings": "Task_Ratings.txt",
+        "activities": "Work_Activities.txt",
+        "abilities": "Abilities.txt",
     }
     for key, fname in files.items():
         path = os.path.join(DATA_DIR, fname)
         if os.path.exists(path):
-            data[key] = pd.read_excel(path)
+            data[key] = pd.read_csv(path, sep='\t')
         else:
             print(f"Warning: {fname} not found at {path}", file=sys.stderr)
             data[key] = pd.DataFrame()
@@ -119,18 +119,12 @@ def get_occupation_detail(data, soc_code):
 
     # Work Activities (importance scores)
     activities = data["activities"]
-    occ_act = activities[
-        (activities["O*NET-SOC Code"] == soc_code)
-        & (activities["Scale ID"] == "IM")
-    ]
+    occ_act = activities[activities["O*NET-SOC Code"] == soc_code]
     result["work_activities"] = occ_act[["Element Name", "Data Value"]].to_dict("records")
 
     # Abilities (importance scores)
     abilities = data["abilities"]
-    occ_abil = abilities[
-        (abilities["O*NET-SOC Code"] == soc_code)
-        & (abilities["Scale ID"] == "IM")
-    ]
+    occ_abil = abilities[abilities["O*NET-SOC Code"] == soc_code]
     result["abilities"] = occ_abil[["Element Name", "Data Value"]].to_dict("records")
 
     return result
@@ -142,10 +136,7 @@ def estimate_ai_exposure(data, soc_code):
     abilities = data["abilities"]
 
     # Work activity-based exposure
-    occ_act = activities[
-        (activities["O*NET-SOC Code"] == soc_code)
-        & (activities["Scale ID"] == "IM")
-    ]
+    occ_act = activities[activities["O*NET-SOC Code"] == soc_code]
 
     if occ_act.empty:
         return None
@@ -166,10 +157,7 @@ def estimate_ai_exposure(data, soc_code):
     activity_exposure = high_exp_score / total_score if total_score > 0 else 0
 
     # Ability-based exposure
-    occ_abil = abilities[
-        (abilities["O*NET-SOC Code"] == soc_code)
-        & (abilities["Scale ID"] == "IM")
-    ]
+    occ_abil = abilities[abilities["O*NET-SOC Code"] == soc_code]
 
     cognitive_score = 0
     physical_score = 0

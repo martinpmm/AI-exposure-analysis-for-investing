@@ -6,12 +6,12 @@ How to use the bundled O*NET datasets to map company workforce to AI exposure sc
 
 The following datasets are bundled in the skill's `data/` directory:
 
-### 1. Occupation_Data.xlsx (~1,016 occupations)
+### 1. Occupation_Data.txt (~1,016 occupations)
 - **Columns:** O*NET-SOC Code, Title, Description
 - **Use:** Look up occupation codes and descriptions to match company job categories
 
-### 2. Task_Statements.xlsx (~18,796 tasks)
-- **Columns:** O*NET-SOC Code, Title, Task ID, Task, Task Type, Incumbents Responding, Date, Domain Source
+### 2. Task_Statements.txt (~18,796 tasks)
+- **Columns:** O*NET-SOC Code, Title, Task ID, Task, Task Type
 - **Use:** See the specific tasks performed by each occupation. Assess which tasks are AI-automatable.
 
 ### 3. Task_Ratings.txt (~35,902 ratings)
@@ -44,7 +44,7 @@ From the 10-K Human Capital and Business Description sections, identify the majo
 
 ### Step 2: Map to O*NET-SOC Codes
 
-Use Occupation_Data.xlsx to find matching O*NET occupations. Common mappings:
+Use Occupation_Data.txt to find matching O*NET occupations. Common mappings:
 
 | Company Job Category | Likely O*NET Codes |
 |---------------------|-------------------|
@@ -68,13 +68,13 @@ Use Occupation_Data.xlsx to find matching O*NET occupations. Common mappings:
 For each mapped occupation, use the datasets to estimate AI exposure:
 
 **Method A — Task-Level Analysis (most rigorous):**
-1. Pull all tasks from Task_Statements.xlsx for the O*NET-SOC code
+1. Pull all tasks from Task_Statements.txt for the O*NET-SOC code
 2. For each task, assess: Can current AI (LLMs, computer vision, etc.) perform this task at comparable quality?
-3. Weight by task importance/frequency from Task_Ratings.xlsx
+3. Weight by task importance/relevance from Task_Ratings.txt
 4. Calculate % of task-weighted work that is AI-automatable
 
 **Method B — Work Activity Analysis (faster):**
-1. Pull work activities from Work_Activities.xlsx for the occupation
+1. Pull work activities from Work_Activities.txt for the occupation
 2. Categorize activities as:
    - **High AI exposure:** Getting Information, Processing Information, Analyzing Data, Documenting/Recording Information, Communicating (written), Scheduling, Estimating
    - **Moderate AI exposure:** Making Decisions, Judging Qualities, Updating Knowledge, Interpreting Information, Creative Thinking
@@ -82,7 +82,7 @@ For each mapped occupation, use the datasets to estimate AI exposure:
 3. Weight by importance scores (IM scale) to get overall exposure
 
 **Method C — Ability Profile Analysis (supplementary):**
-1. Pull abilities from Abilities.xlsx
+1. Pull abilities from Abilities.txt
 2. Cognitive abilities (oral/written comprehension, deductive reasoning, information ordering) → higher AI exposure
 3. Physical abilities (manual dexterity, stamina, trunk strength) → lower AI exposure
 4. The ratio of cognitive-to-physical ability importance indicates exposure level
